@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobCommand — Student Career Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060810;--s1:#0b0e1a;--s2:#10142a;--s3:#151928;
+  --border:#1c2236;--border2:#242a3e;
+  --a:#00f5c4;--a2:#7c6af7;--a3:#ff6b6b;--a4:#ffa94d;
+  --text:#e8eaf6;--muted:#5a6480;--dim:#3a4460;--gold:#ffd166;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+.bg-canvas{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:drift 20s ease-in-out infinite;}
+.orb1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,245,196,.05),transparent 70%);top:-150px;right:-100px;animation-duration:18s;}
+.orb2{width:700px;height:700px;background:radial-gradient(circle,rgba(124,106,247,.04),transparent 70%);bottom:-200px;left:-150px;animation-duration:24s;animation-delay:-8s;}
+.orb3{width:350px;height:350px;background:radial-gradient(circle,rgba(255,107,107,.03),transparent 70%);top:40%;left:38%;animation-duration:16s;animation-delay:-5s;}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1);}33%{transform:translate(40px,-30px) scale(1.06);}66%{transform:translate(-25px,35px) scale(.94);}}
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.012) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+
+.page{display:none;min-height:100vh;position:relative;z-index:1;}
+.page.active{display:block;}
+
+/* ══ AUTH ══ */
+#auth-page{display:flex;min-height:100vh;}
+#auth-page.active{display:flex;}
+
+.auth-left{flex:1;display:flex;flex-direction:column;justify-content:center;padding:80px;border-right:1px solid var(--border);position:relative;overflow:hidden;}
+.auth-left::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,196,.02),rgba(124,106,247,.03));}
+.auth-brand{font-family:'Space Grotesk',sans-serif;font-size:44px;font-weight:700;line-height:1.1;margin-bottom:20px;position:relative;}
+.auth-brand em{font-style:normal;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.auth-tagline{font-size:17px;color:var(--muted);line-height:1.7;max-width:420px;margin-bottom:52px;position:relative;}
+.feat{display:flex;align-items:center;gap:14px;padding:15px 18px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;font-size:14px;color:var(--muted);position:relative;animation:slideR .6s ease both;}
+.feat:nth-child(1){animation-delay:.15s;} .feat:nth-child(2){animation-delay:.3s;} .feat:nth-child(3){animation-delay:.45s;}
+.feat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+@keyframes slideR{from{opacity:0;transform:translateX(-24px);}to{opacity:1;transform:translateX(0);}}
+
+.auth-right{width:490px;flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:48px 44px;background:var(--s1);}
+.auth-box{width:100%;animation:slideU .5s cubic-bezier(.16,1,.3,1);}
+@keyframes slideU{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+.auth-box-h{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;margin-bottom:6px;}
+.auth-box-s{color:var(--muted);font-size:14px;margin-bottom:32px;}
+.auth-tabs{display:flex;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:28px;}
+.auth-tab{flex:1;padding:11px;border:none;background:transparent;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;border-radius:9px;cursor:pointer;transition:.25s;}
+.auth-tab.active{background:rgba(0,245,196,.1);color:var(--a);border:1px solid rgba(0,245,196,.2);}
+.fg{margin-bottom:18px;}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+.fi{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:12px;padding:13px 16px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;outline:none;transition:.2s;}
+.fi:focus{border-color:var(--a);box-shadow:0 0 0 4px rgba(0,245,196,.07);}
+.fi::placeholder{color:var(--dim);}
+.btn-auth{width:100%;padding:15px;background:linear-gradient(135deg,var(--a),#00cfa8);border:none;border-radius:12px;color:#060810;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:.25s;position:relative;overflow:hidden;margin-top:4px;}
+.btn-auth:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(0,245,196,.28);}
+.btn-auth:active{transform:translateY(0);}
+.auth-err{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.25);border-radius:10px;padding:12px 16px;color:var(--a3);font-size:13px;margin-bottom:16px;display:none;animation:shake .3s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
+/* ══ SHELL ══ */
+.shell{display:grid;grid-template-columns:68px 1fr;min-height:100vh;transition:grid-template-columns .3s ease;}
+.shell.exp{grid-template-columns:236px 1fr;}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--s1);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:18px 0 20px;position:sticky;top:0;height:100vh;overflow:hidden;transition:.3s ease;}
+.shell.exp .sidebar{align-items:stretch;padding:18px 12px 20px;}
+.sb-top{display:flex;align-items:center;margin-bottom:28px;padding:0 4px;}
+.sb-logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:15px;color:#060810;cursor:pointer;flex-shrink:0;transition:.2s;}
+.sb-logo:hover{transform:scale(1.08);}
+.sb-wordmark{display:none;font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-left:10px;white-space:nowrap;}
+.shell.exp .sb-wordmark{display:block;}
+.sb-sec{font-size:10px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.12em;margin:14px 0 6px 8px;display:none;}
+.shell.exp .sb-sec{display:block;}
+.ni{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;color:var(--muted);cursor:pointer;font-size:18px;transition:.18s;margin-bottom:2px;border:none;background:transparent;position:relative;}
+.shell.exp .ni{width:100%;justify-content:flex-start;padding:0 12px;gap:11px;}
+.ni:hover{background:var(--s3);color:var(--text);}
+.ni.act{background:rgba(0,245,196,.1);color:var(--a);}
+.shell.exp .ni.act{box-shadow:inset 3px 0 0 var(--a);}
+.ni-lbl{display:none;font-size:13px;font-weight:500;white-space:nowrap;}
+.shell.exp .ni-lbl{display:block;}
+.ni-tip{position:absolute;left:58px;top:50%;transform:translateY(-50%);background:var(--s3);border:1px solid var(--border2);padding:6px 12px;border-radius:8px;font-size:12px;white-space:nowrap;pointer-events:none;opacity:0;transition:.15s;z-index:200;}
+.ni:hover .ni-tip{opacity:1;}
+.shell.exp .ni-tip{display:none;}
+.sb-user{display:none;align-items:center;gap:10px;padding:12px;background:var(--s3);border-radius:12px;margin-bottom:16px;}
+.shell.exp .sb-user{display:flex;}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#060810;flex-shrink:0;}
+.sb-un{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-ue{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sb-bot{margin-top:auto;}
+.sb-out{width:44px;height:36px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:.2s;gap:8px;}
+.shell.exp .sb-out{width:100%;padding:0 12px;}
+.sb-out:hover{border-color:var(--a3);color:var(--a3);}
+.sb-out-lbl{display:none;font-size:13px;font-weight:500;}
+.shell.exp .sb-out-lbl{display:block;}
+
+/* ── MAIN ── */
+.main-wrap{overflow-y:auto;height:100vh;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--border);background:rgba(6,8,16,.85);backdrop-filter:blur(24px);position:sticky;top:0;z-index:50;}
+.topbar-t{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;}
+.topbar-r{display:flex;gap:10px;}
+.tb-btn{background:transparent;border:1px solid var(--border2);border-radius:10px;padding:8px 16px;color:var(--muted);font-size:13px;cursor:pointer;transition:.18s;display:flex;align-items:center;gap:6px;font-family:'Plus Jakarta Sans',sans-serif;}
+.tb-btn:hover{border-color:var(--a);color:var(--a);}
+
+.content{padding:28px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeUp .4s cubic-bezier(.16,1,.3,1);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.ph{margin-bottom:26px;}
+.ph h1{font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:700;margin-bottom:4px;}
+.ph p{color:var(--muted);font-size:14px;}
+
+/* ── STATS ── */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.sc{background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden;transition:.25s;}
+.sc:hover{transform:translateY(-3px);border-color:var(--border2);}
+.sc-glow{position:absolute;top:-40px;right:-40px;width:130px;height:130px;border-radius:50%;filter:blur(50px);opacity:.35;}
+.sc-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px;}
+.sc-v{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:800;line-height:1;margin-bottom:4px;}
+.sc-l{font-size:12px;color:var(--muted);font-weight:500;}
+
+/* ── TABLE ── */
+.tw{background:var(--s2);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
+.th{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--border);}
+.th-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:rgba(255,255,255,.02);}
+th{padding:11px 18px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+tbody tr{border-top:1px solid var(--border);transition:background .12s;cursor:pointer;}
+tbody tr:hover{background:rgba(255,255,255,.018);}
+tbody tr.selected-row{background:rgba(0,245,196,.04);}
+td{padding:13px 18px;font-size:14px;vertical-align:middle;}
+.cb{width:20px;height:20px;border-radius:6px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;transition:.18s;font-size:11px;font-weight:800;flex-shrink:0;}
+.selected-row .cb{background:var(--a);border-color:var(--a);color:#060810;}
+.jl{display:flex;align-items:center;gap:11px;}
+.jlogo{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;border:1px solid var(--border);}
+.jn{font-weight:600;font-size:14px;}
+.js{font-size:11px;color:var(--muted);}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.p-up{background:rgba(0,245,196,.08);color:var(--a);border:1px solid rgba(0,245,196,.18);}
+.p-at{background:rgba(124,106,247,.08);color:var(--a2);border:1px solid rgba(124,106,247,.18);}
+.p-mi{background:rgba(255,107,107,.08);color:var(--a3);border:1px solid rgba(255,107,107,.18);}
+.dc{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.dr{background:rgba(255,107,107,.1);color:#ff8a8a;}
+.do{background:rgba(255,169,77,.1);color:var(--a4);}
+.dg{background:rgba(0,245,196,.08);color:var(--a);}
+.ef{display:flex;align-items:center;gap:8px;}
+.et{width:54px;height:5px;background:var(--border2);border-radius:3px;overflow:hidden;}
+.ef-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--a),var(--a2));}
+.en{font-size:12px;color:var(--muted);}
+.bell{font-size:13px;animation:ring 3s ease-in-out infinite;}
+@keyframes ring{0%,85%,100%{transform:rotate(0);}88%{transform:rotate(-18deg);}92%{transform:rotate(18deg);}96%{transform:rotate(-10deg);}}
+
+/* ── SELECTION BANNER ── */
+.sb2{background:linear-gradient(135deg,rgba(0,245,196,.05),rgba(124,106,247,.05));border:1px solid rgba(0,245,196,.18);border-radius:14px;padding:13px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;transform:translateY(-8px);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.16,1,.3,1);flex-wrap:wrap;}
+.sb2.on{transform:translateY(0);opacity:1;pointer-events:all;}
+.sb2-n{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:18px;color:var(--a);}
+.sb2-i{flex:1;font-size:13px;color:var(--muted);}
+
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:none;}
+.btn-p{background:linear-gradient(135deg,var(--a),#00cfa8);color:#060810;}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 8px 22px rgba(0,245,196,.22);}
+.btn-g{background:transparent;border:1px solid var(--border2);color:var(--muted);}
+.btn-g:hover{border-color:var(--a);color:var(--a);}
+.ni2{background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;text-align:center;outline:none;width:62px;transition:.2s;}
+.ni2:focus{border-color:var(--a);}
+.sel-s{background:var(--bg);border:1px solid var(--border2);border-radius:9px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+
+/* ── SMART SUGGEST ── */
+.sug-hero{background:linear-gradient(135deg,rgba(0,245,196,.04),rgba(124,106,247,.07));border:1px solid rgba(124,106,247,.2);border-radius:18px;padding:22px 26px;margin-bottom:22px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.formula-box{font-size:13px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-family:'Space Grotesk',sans-serif;margin-left:auto;}
+.f1{color:var(--a);} .f2{color:var(--a2);}
+.rank-card{background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:17px 20px;display:flex;align-items:center;gap:14px;margin-bottom:10px;transition:all .25s;cursor:pointer;position:relative;overflow:hidden;}
+.rank-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--border);transition:.2s;border-radius:3px;}
+.rank-card:hover{border-color:var(--border2);transform:translateX(4px);}
+.rank-card:hover::after,.rank-card.rc-sel::after{background:var(--a);}
+.rank-card.rc-sel{border-color:rgba(0,245,196,.28);background:rgba(0,245,196,.03);}
+.rn{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;width:32px;text-align:center;color:var(--dim);}
+.sc-pill{background:rgba(0,245,196,.12);border:1px solid rgba(0,245,196,.2);border-radius:8px;padding:4px 10px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--a);}
+
+/* ── ANALYTICS ── */
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+.gc{background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:22px;display:flex;flex-direction:column;align-items:center;}
+.gc-t{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;margin-bottom:3px;align-self:flex-start;}
+.gc-s{font-size:12px;color:var(--muted);align-self:flex-start;margin-bottom:18px;}
+.g-wrap{position:relative;display:flex;align-items:center;justify-content:center;}
+svg.gauge{transform:rotate(-90deg);}
+.g-inner{position:absolute;text-align:center;}
+.g-v{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;}
+.g-u{font-size:11px;color:var(--muted);}
+.bar-r{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.bar-l{width:68px;font-size:12px;color:var(--muted);text-align:right;flex-shrink:0;}
+.bar-t{flex:1;height:8px;background:var(--s3);border-radius:4px;overflow:hidden;}
+.bar-f{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(.16,1,.3,1);}
+.bar-n{width:28px;font-size:13px;font-weight:600;text-align:right;}
+
+/* ── CALENDAR ── */
+.cal-w{background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:22px;}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.cal-nav{background:transparent;border:1px solid var(--border2);border-radius:8px;width:33px;height:33px;color:var(--text);font-size:16px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;}
+.cal-nav:hover{border-color:var(--a);color:var(--a);}
+.cal-mo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cdn{text-align:center;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:5px 0;}
+.cd{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:13px;cursor:pointer;transition:.15s;position:relative;}
+.cd:hover{background:var(--s3);}
+.cd.tod{background:rgba(0,245,196,.1);color:var(--a);font-weight:700;box-shadow:0 0 0 2px rgba(0,245,196,.28);}
+.cd.oth{color:var(--dim);opacity:.4;}
+.cd::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;opacity:0;}
+.cd.hatt::after{opacity:1;background:var(--a);}
+.cd.hdead::after{opacity:1;background:var(--a4);}
+
+/* ── PROFILE ── */
+.prof-hero{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--border);border-radius:20px;padding:30px;display:flex;align-items:center;gap:26px;margin-bottom:22px;position:relative;overflow:hidden;}
+.prof-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(0,245,196,.07),transparent 70%);}
+.big-av{width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,var(--a),var(--a2));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:800;color:#060810;box-shadow:0 0 0 4px rgba(0,245,196,.18);flex-shrink:0;}
+.lv-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.25);color:var(--gold);padding:5px 13px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:9px;}
+.prog-t{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:5px;max-width:280px;}
+.prog-f{height:100%;background:linear-gradient(90deg,var(--gold),#f59e0b);border-radius:3px;transition:width 1.2s cubic-bezier(.16,1,.3,1);}
+
+/* ── COMPANIES ── */
+.cog{display:grid;grid-template-columns:repeat(auto-fill,minmax(198px,1fr));gap:13px;}
+.co-card{background:var(--s2);border:1px solid var(--border);border-radius:15px;padding:17px;transition:.25s;cursor:pointer;position:relative;overflow:hidden;}
+.co-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,245,196,.03),rgba(124,106,247,.03));opacity:0;transition:.25s;}
+.co-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+.co-card:hover::before{opacity:1;}
+.co-logo{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:11px;border:1px solid var(--border);}
+.co-n{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;margin-bottom:3px;}
+.co-site{font-size:11px;margin-bottom:7px;}
+.co-d{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:9px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.co-tags{display:flex;gap:6px;flex-wrap:wrap;}
+.co-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--s3);color:var(--muted);}
+
+/* ── MODAL ── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.22s;}
+.mo.on{opacity:1;pointer-events:all;}
+.mo-box{background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:30px;width:450px;max-width:95vw;transform:scale(.93) translateY(10px);transition:.3s cubic-bezier(.16,1,.3,1);}
+.mo.on .mo-box{transform:scale(1) translateY(0);}
+.mo-t{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;margin-bottom:22px;}
+.mo-row{display:grid;grid-template-columns:1fr 1fr;gap:13px;}
+.mo-acts{display:flex;gap:10px;margin-top:22px;}
+
+/* ── TOAST ── */
+.t-stack{position:fixed;bottom:22px;right:22px;z-index:9000;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
+.t{background:rgba(11,14,26,.95);border:1px solid var(--border2);border-radius:12px;padding:12px 17px;font-size:13px;display:flex;align-items:center;gap:10px;transform:translateX(115%);transition:.35s cubic-bezier(.16,1,.3,1);pointer-events:all;max-width:310px;backdrop-filter:blur(24px);}
+.t.in{transform:translateX(0);}
+.t.success{border-color:rgba(0,245,196,.3);color:var(--a);}
+.t.error{border-color:rgba(255,107,107,.3);color:var(--a3);}
+.t.info{border-color:rgba(124,106,247,.3);color:var(--a2);}
+.t-ico{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.t.success .t-ico{background:rgba(0,245,196,.12);}
+.t.error .t-ico{background:rgba(255,107,107,.12);}
+.t.info .t-ico{background:rgba(124,106,247,.12);}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+@media(max-width:820px){
+  .auth-left{display:none;}
+  .auth-right{width:100%;}
+  .sg{grid-template-columns:1fr 1fr;}
+  .ag{grid-template-columns:1fr;}
+  .content{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div class="bg-canvas"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<div class="grid-bg"></div>
+
+<!-- ═══ AUTH ═══ -->
+<div id="auth-page" class="page active">
+  <div class="auth-left">
+    <div class="auth-brand"><em>Job</em>Command ⚡</div>
+    <div class="auth-tagline">Your intelligent student career hub. Priority-driven, deadline-aware, always one step ahead.</div>
+    <div>
+      <div class="feat"><div class="feat-icon" style="background:rgba(0,245,196,.1);">🎯</div><div><strong style="color:var(--text);">Smart Suggest</strong> — Jobs ranked by urgency &amp; effort formula</div></div>
+      <div class="feat"><div class="feat-icon" style="background:rgba(124,106,247,.1);">📊</div><div><strong style="color:var(--text);">Live Analytics</strong> — Success rate &amp; placement probability</div></div>
+      <div class="feat"><div class="feat-icon" style="background:rgba(255,169,77,.1);">🏢</div><div><strong style="color:var(--text);">50 Companies</strong> — World-class employers at your fingertips</div></div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <div class="auth-box-h" id="auth-h">Welcome back</div>
+      <div class="auth-box-s" id="auth-s">Login to your dashboard</div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="swAuth('login',this)">Login</button>
+        <button class="auth-tab" onclick="swAuth('signup',this)">Sign Up</button>
+      </div>
+      <div class="auth-err" id="auth-err"></div>
+      <div id="lf">
+        <div class="fg"><label>Email</label><input class="fi" type="email" id="le" placeholder="you@university.edu"></div>
+        <div class="fg"><label>Password</label><input class="fi" type="password" id="lp" placeholder="••••••••"></div>
+        <button class="btn-auth" onclick="doLogin()">Login to Dashboard →</button>
+      </div>
+      <div id="sf" style="display:none;">
+        <div class="fg"><label>Full Name</label><input class="fi" type="text" id="sn" placeholder="Alex Johnson"></div>
+        <div class="fg"><label>Email</label><input class="fi" type="email" id="se" placeholder="you@university.edu"></div>
+        <div class="fg"><label>Password</label><input class="fi" type="password" id="sp" placeholder="Create a strong password"></div>
+        <button class="btn-auth" onclick="doSignup()">Create Account →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app-page" class="page">
+  <div class="shell" id="shell">
+    <aside class="sidebar">
+      <div class="sb-top">
+        <div class="sb-logo" onclick="toggleSB()">J</div>
+        <div class="sb-wordmark">JobCommand</div>
+      </div>
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">A</div>
+        <div><div class="sb-un" id="sb-un">Student</div><div class="sb-ue" id="sb-ue">—</div></div>
+      </div>
+      <div class="sb-sec">Main</div>
+      <button class="ni act" onclick="goTo('dashboard',this)">🏠<span class="ni-lbl">Dashboard</span><span class="ni-tip">Dashboard</span></button>
+      <button class="ni" onclick="goTo('jobs',this)">💼<span class="ni-lbl">All Jobs</span><span class="ni-tip">All Jobs</span></button>
+      <button class="ni" onclick="goTo('smart',this)">🎯<span class="ni-lbl">Smart Suggest</span><span class="ni-tip">Smart Suggest</span></button>
+      <button class="ni" onclick="goTo('calendar',this)">📅<span class="ni-lbl">Calendar</span><span class="ni-tip">Calendar</span></button>
+      <div class="sb-sec">Insights</div>
+      <button class="ni" onclick="goTo('analytics',this)">📊<span class="ni-lbl">Analytics</span><span class="ni-tip">Analytics</span></button>
+      <button class="ni" onclick="goTo('profile',this)">👤<span class="ni-lbl">Profile</span><span class="ni-tip">Profile</span></button>
+      <button class="ni" onclick="goTo('companies',this)">🏢<span class="ni-lbl">Companies</span><span class="ni-tip">Companies</span></button>
+      <div class="sb-bot">
+        <button class="sb-out" onclick="doLogout()">🚪<span class="sb-out-lbl">Logout</span></button>
+      </div>
+    </aside>
+
+    <div class="main-wrap">
+      <div class="topbar">
+        <div class="topbar-t" id="tb-title">Dashboard</div>
+        <div class="topbar-r">
+          <button class="tb-btn" onclick="openAddJob()">＋ Add Job</button>
+          <button class="tb-btn" onclick="doLogout()">🚪 Logout</button>
+        </div>
+      </div>
+      <div class="content">
+
+        <!-- DASHBOARD -->
+        <div id="sec-dashboard" class="section active">
+          <div class="ph"><h1 id="greet">Good morning 👋</h1><p>Your career activity overview</p></div>
+          <div class="sg">
+            <div class="sc"><div class="sc-glow" style="background:rgba(0,245,196,.4);"></div><div class="sc-ico" style="background:rgba(0,245,196,.1);">✅</div><div class="sc-v" style="color:var(--a)" id="d-att">0</div><div class="sc-l">Jobs Attended</div></div>
+            <div class="sc"><div class="sc-glow" style="background:rgba(124,106,247,.4);"></div><div class="sc-ico" style="background:rgba(124,106,247,.1);">⏳</div><div class="sc-v" style="color:var(--a2)" id="d-up">0</div><div class="sc-l">Upcoming</div></div>
+            <div class="sc"><div class="sc-glow" style="background:rgba(255,107,107,.4);"></div><div class="sc-ico" style="background:rgba(255,107,107,.1);">❌</div><div class="sc-v" style="color:var(--a3)" id="d-mis">0</div><div class="sc-l">Missed</div></div>
+            <div class="sc"><div class="sc-glow" style="background:rgba(255,209,102,.4);"></div><div class="sc-ico" style="background:rgba(255,209,102,.1);">🏆</div><div class="sc-v" style="color:var(--gold)" id="d-rate">0%</div><div class="sc-l">Success Rate</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+            <div style="background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:20px;">
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:14px;font-size:15px;">📌 Today's Deadlines</div>
+              <div id="td-list"><div style="color:var(--muted);font-size:14px;">No deadlines today ✓</div></div>
+            </div>
+            <div style="background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:20px;">
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:14px;font-size:15px;">⚡ Quick Actions</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-p" onclick="goTo('smart',null)" style="justify-content:flex-start;">🎯 Get Smart Suggestions</button>
+                <button class="btn btn-g" onclick="goTo('jobs',null)" style="justify-content:flex-start;">💼 Browse All Jobs</button>
+                <button class="btn btn-g" onclick="openAddJob()" style="justify-content:flex-start;">➕ Add New Job</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ALL JOBS -->
+        <div id="sec-jobs" class="section">
+          <div class="ph"><h1>All Jobs</h1><p>Select upcoming jobs and confirm within your daily limit</p></div>
+          <div class="sb2" id="sel-banner">
+            <div class="sb2-n"><span id="sel-n">0</span> selected</div>
+            <div class="sb2-i">Set daily limit then confirm</div>
+            <label style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:7px;">Limit: <input type="number" class="ni2" id="d-lim" value="5" min="1" max="20" style="width:54px;"></label>
+            <button class="btn btn-p" onclick="confirmSel()">✓ Confirm</button>
+            <button class="btn btn-g" onclick="clearSel()">✕ Clear</button>
+          </div>
+          <div class="tw">
+            <div class="th">
+              <div class="th-title">Job Listings <span id="jb" style="font-size:13px;color:var(--muted);font-weight:400;"></span></div>
+              <div style="display:flex;gap:8px;">
+                <select class="sel-s" id="f-status" onchange="renderJobs()">
+                  <option value="all">All Status</option><option value="upcoming">Upcoming</option><option value="attended">Attended</option><option value="missed">Missed</option>
+                </select>
+              </div>
+            </div>
+            <table><thead><tr><th style="width:44px;"></th><th>Job</th><th>Deadline</th><th>Days Left</th><th>Effort</th><th>Status</th><th></th></tr></thead>
+            <tbody id="jtb"></tbody></table>
+          </div>
+        </div>
+
+        <!-- SMART SUGGEST -->
+        <div id="sec-smart" class="section">
+          <div class="ph"><h1>🎯 Smart Suggest</h1><p>Jobs ranked by priority — highest score = do it first</p></div>
+          <div class="sug-hero">
+            <div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;margin-bottom:8px;color:var(--muted);">SHOW TOP</div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <input type="number" class="ni2" id="sug-n" value="3" min="1" max="20">
+                <span style="color:var(--muted);font-size:14px;">upcoming jobs</span>
+                <button class="btn btn-p" onclick="runSuggest()">🚀 Get Suggestions</button>
+              </div>
+            </div>
+            <div class="formula-box">Priority = <span class="f1">1/(urgency+1)</span> + <span class="f2">1/effort</span></div>
+          </div>
+          <div class="sb2" id="sug-banner">
+            <div class="sb2-n"><span id="sug-n2">0</span> selected</div>
+            <div class="sb2-i">Confirm to mark as attended</div>
+            <label style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:7px;">Limit: <input type="number" class="ni2" id="sug-lim" value="5" min="1" max="20" style="width:54px;"></label>
+            <button class="btn btn-p" onclick="confirmSugSel()">✓ Confirm</button>
+            <button class="btn btn-g" onclick="clearSugSel()">✕ Clear</button>
+          </div>
+          <div id="sug-list"><div style="text-align:center;padding:56px 20px;color:var(--muted);"><div style="font-size:48px;margin-bottom:14px;">🎯</div><div style="font-size:15px;">Click <strong style="color:var(--a);">Get Suggestions</strong> to see ranked jobs</div></div></div>
+        </div>
+
+        <!-- CALENDAR -->
+        <div id="sec-calendar" class="section">
+          <div class="ph"><h1>📅 Calendar</h1><p>Deadlines and attended jobs at a glance</p></div>
+          <div style="display:grid;grid-template-columns:1fr 270px;gap:18px;">
+            <div class="cal-w">
+              <div class="cal-h">
+                <button class="cal-nav" onclick="calPrev()">‹</button>
+                <div class="cal-mo" id="cal-mo"></div>
+                <button class="cal-nav" onclick="calNext()">›</button>
+              </div>
+              <div class="cal-grid" id="cal-g"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:13px;">
+              <div style="background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:17px;">
+                <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:11px;">Legend</div>
+                <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:50%;background:var(--a);display:inline-block;"></span>Attended</div>
+                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:50%;background:var(--a4);display:inline-block;"></span>Deadline</div>
+                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:50%;background:transparent;border:2px solid var(--a);display:inline-block;"></span>Today</div>
+                </div>
+              </div>
+              <div style="background:var(--s2);border:1px solid var(--border);border-radius:16px;padding:17px;flex:1;" id="cal-det"><div style="color:var(--muted);font-size:13px;">Click a day to see details</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div id="sec-analytics" class="section">
+          <div class="ph"><h1>📊 Analytics</h1><p>Performance insights and placement probability</p></div>
+          <div class="ag">
+            <div class="gc">
+              <div class="gc-t">Success Rate</div><div class="gc-s">Jobs attended vs total</div>
+              <div class="g-wrap" style="height:140px;">
+                <svg class="gauge" width="140" height="140" viewBox="0 0 140 140">
+                  <circle cx="70" cy="70" r="54" fill="none" stroke="var(--s3)" stroke-width="10"/>
+                  <circle cx="70" cy="70" r="54" fill="none" stroke="url(#g1)" stroke-width="10" stroke-dasharray="339.3" stroke-dashoffset="339.3" id="arc1" stroke-linecap="round" style="transition:stroke-dashoffset 1.4s cubic-bezier(.16,1,.3,1);"/>
+                  <defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#00f5c4"/><stop offset="100%" stop-color="#7c6af7"/></linearGradient></defs>
+                </svg>
+                <div class="g-inner"><div class="g-v" id="gv1">0%</div><div class="g-u">success</div></div>
+              </div>
+            </div>
+            <div class="gc">
+              <div class="gc-t">Placement Probability</div><div class="gc-s">Estimated placement chance</div>
+              <div class="g-wrap" style="height:140px;">
+                <svg class="gauge" width="140" height="140" viewBox="0 0 140 140">
+                  <circle cx="70" cy="70" r="54" fill="none" stroke="var(--s3)" stroke-width="10"/>
+                  <circle cx="70" cy="70" r="54" fill="none" stroke="url(#g2)" stroke-width="10" stroke-dasharray="339.3" stroke-dashoffset="339.3" id="arc2" stroke-linecap="round" style="transition:stroke-dashoffset 1.4s cubic-bezier(.16,1,.3,1);"/>
+                  <defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ffa94d"/><stop offset="100%" stop-color="#ffd166"/></linearGradient></defs>
+                </svg>
+                <div class="g-inner"><div class="g-v" id="gv2">0%</div><div class="g-u">probability</div></div>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:18px;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;margin-bottom:3px;">Smoothing Score</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">100 = perfectly balanced daily workload</div>
+            <div style="display:flex;align-items:center;gap:18px;">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:44px;font-weight:800;color:var(--a4);" id="sm-score">—</div>
+              <div style="flex:1;"><div style="height:10px;background:var(--s3);border-radius:5px;overflow:hidden;margin-bottom:5px;"><div id="sm-bar" style="height:100%;background:linear-gradient(90deg,var(--a4),var(--gold));border-radius:5px;transition:width 1.2s cubic-bezier(.16,1,.3,1);width:0%;"></div></div><div style="font-size:12px;color:var(--muted);">Higher = more consistent application pattern</div></div>
+            </div>
+          </div>
+          <div style="background:var(--s2);border:1px solid var(--border);border-radius:18px;padding:22px;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;margin-bottom:16px;">Status Breakdown</div>
+            <div id="bchart"></div>
+          </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div id="sec-profile" class="section">
+          <div class="ph"><h1>👤 Profile</h1><p>Your career journey progress</p></div>
+          <div class="prof-hero">
+            <div class="big-av" id="p-av">A</div>
+            <div style="flex:1;">
+              <div class="lv-pill">🏆 <span id="p-lv">Intern</span></div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:23px;font-weight:800;margin-bottom:3px;" id="p-name">Student</div>
+              <div style="color:var(--muted);font-size:13px;margin-bottom:12px;" id="p-email">—</div>
+              <div class="prog-t"><div class="prog-f" id="p-bar"></div></div>
+              <div style="font-size:11px;color:var(--muted);" id="p-prog">0/5 to next level</div>
+            </div>
+          </div>
+          <div class="sg">
+            <div class="sc"><div class="sc-ico" style="background:rgba(0,245,196,.1);">✅</div><div class="sc-v" style="color:var(--a)" id="p-att">0</div><div class="sc-l">Attended</div></div>
+            <div class="sc"><div class="sc-ico" style="background:rgba(255,107,107,.1);">❌</div><div class="sc-v" style="color:var(--a3)" id="p-mis">0</div><div class="sc-l">Missed</div></div>
+            <div class="sc"><div class="sc-ico" style="background:rgba(124,106,247,.1);">⏳</div><div class="sc-v" style="color:var(--a2)" id="p-up">0</div><div class="sc-l">Upcoming</div></div>
+            <div class="sc"><div class="sc-ico" style="background:rgba(255,209,102,.1);">🎖️</div><div class="sc-v" style="font-size:20px;padding-top:6px;" id="p-ico">🎓</div><div class="sc-l">Level</div></div>
+          </div>
+        </div>
+
+        <!-- COMPANIES -->
+        <div id="sec-companies" class="section">
+          <div class="ph"><h1>🏢 Top Companies</h1><p>50 world-class employers actively hiring students</p></div>
+          <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+            <input type="text" class="fi" id="co-q" placeholder="🔍  Search companies..." oninput="renderCos()" style="flex:1;min-width:180px;padding:10px 16px;">
+            <select class="sel-s" id="co-f" onchange="renderCos()" style="padding:9px 14px;">
+              <option value="all">All Industries</option><option value="tech">Technology</option><option value="finance">Finance</option><option value="consulting">Consulting</option><option value="ecommerce">E-Commerce</option><option value="automotive">Automotive</option>
+            </select>
+          </div>
+          <div class="cog" id="co-grid"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="mo" id="add-modal">
+  <div class="mo-box">
+    <div class="mo-t">➕ Add New Job</div>
+    <div class="fg"><label>Job Title</label><input class="fi" type="text" id="nj-t" placeholder="e.g. Software Engineer Intern at Google"></div>
+    <div class="mo-row">
+      <div class="fg"><label>Effort (1–10)</label><input class="fi" type="number" id="nj-e" min="1" max="10" value="5"></div>
+      <div class="fg"><label>Deadline</label><input class="fi" type="date" id="nj-d"></div>
+    </div>
+    <div class="mo-acts">
+      <button class="btn btn-p" onclick="submitJob()">✓ Add Job</button>
+      <button class="btn btn-g" onclick="closeMo()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="t-stack" id="ts"></div>
+
+<script>
+// ══ CONFIGURATION ══
+const API_BASE_URL = 'http://localhost:8000';
+
+// ══ STATE ══
+let cu = null;
+let jobs = [];
+let selIds = new Set();
+let sugIds = new Set();
+let calY, calM;
+const UK = 'jc_u';
+const JK = 'jc_j';
+const CK = 'jc_c';
+
+// ══ COMPANIES ══
+const COS = [
+  {n:"Google",l:"🔍",c:"#4285F4",ind:"tech",e:"180k+",v:"$1.7T",d:"World's leading search engine and AI company.",s:"careers.google.com"},
+  {n:"Apple",l:"🍎",c:"#888",ind:"tech",e:"164k+",v:"$2.8T",d:"Consumer electronics and software giant.",s:"jobs.apple.com"},
+  {n:"Microsoft",l:"🪟",c:"#00a4ef",ind:"tech",e:"220k+",v:"$3.1T",d:"Cloud, productivity, and gaming leader.",s:"careers.microsoft.com"},
+  {n:"Amazon",l:"📦",c:"#FF9900",ind:"ecommerce",e:"1.5M+",v:"$1.9T",d:"E-commerce and cloud computing pioneer.",s:"amazon.jobs"},
+  {n:"Meta",l:"👁️",c:"#0668E1",ind:"tech",e:"86k+",v:"$1.1T",d:"Social media, VR/AR and AI research.",s:"metacareers.com"},
+  {n:"Netflix",l:"🎬",c:"#E50914",ind:"tech",e:"13k+",v:"$230B",d:"Streaming giant with cutting-edge ML systems.",s:"jobs.netflix.com"},
+  {n:"Tesla",l:"⚡",c:"#CC0000",ind:"automotive",e:"127k+",v:"$600B",d:"Electric vehicles and autonomous driving.",s:"tesla.com/careers"},
+  {n:"Goldman Sachs",l:"💰",c:"#7399C6",ind:"finance",e:"45k+",v:"$130B",d:"Top investment bank globally.",s:"goldmansachs.com/careers"},
+  {n:"McKinsey",l:"📋",c:"#0057a8",ind:"consulting",e:"45k+",v:"Private",d:"World's top management consulting firm.",s:"mckinsey.com/careers"},
+  {n:"Spotify",l:"🎵",c:"#1DB954",ind:"tech",e:"9k+",v:"$35B",d:"Audio streaming with world-class ML.",s:"lifeatspotify.com"},
+  {n:"Airbnb",l:"🏠",c:"#FF5A5F",ind:"tech",e:"6k+",v:"$75B",d:"Online marketplace for travel experiences.",s:"careers.airbnb.com"},
+  {n:"Uber",l:"🚗",c:"#333",ind:"tech",e:"32k+",v:"$90B",d:"Ride-sharing and delivery platform.",s:"uber.com/careers"},
+  {n:"Stripe",l:"💳",c:"#6772E5",ind:"finance",e:"8k+",v:"$50B",d:"Payments infrastructure for the internet.",s:"stripe.com/jobs"},
+  {n:"Salesforce",l:"☁️",c:"#00A1E0",ind:"tech",e:"79k+",v:"$240B",d:"Cloud CRM and enterprise software.",s:"salesforce.com/careers"},
+  {n:"Adobe",l:"🎨",c:"#FF0000",ind:"tech",e:"29k+",v:"$220B",d:"Creative cloud and digital experience.",s:"adobe.com/careers"},
+  {n:"NVIDIA",l:"🖥️",c:"#76b900",ind:"tech",e:"26k+",v:"$1.8T",d:"GPU computing and AI chips leader.",s:"nvidia.com/careers"},
+  {n:"Intel",l:"🔵",c:"#0071C5",ind:"tech",e:"120k+",v:"$100B",d:"Semiconductor chips since 1968.",s:"intel.com/jobs"},
+  {n:"IBM",l:"🌐",c:"#006699",ind:"tech",e:"282k+",v:"$130B",d:"Enterprise IT, cloud and quantum.",s:"ibm.com/employment"},
+  {n:"Oracle",l:"🔴",c:"#F80000",ind:"tech",e:"164k+",v:"$330B",d:"Database and cloud infrastructure.",s:"oracle.com/careers"},
+  {n:"JP Morgan",l:"🏦",c:"#005587",ind:"finance",e:"309k+",v:"$530B",d:"Largest US bank by assets.",s:"careers.jpmorgan.com"},
+  {n:"BlackRock",l:"📈",c:"#444",ind:"finance",e:"22k+",v:"$110B",d:"World's largest asset manager.",s:"blackrock.com/careers"},
+  {n:"Deloitte",l:"🏛️",c:"#86BC25",ind:"consulting",e:"415k+",v:"Private",d:"Big Four professional services.",s:"deloitte.com/careers"},
+  {n:"Accenture",l:"⟩",c:"#A100FF",ind:"consulting",e:"750k+",v:"$200B",d:"Global consulting and outsourcing.",s:"accenture.com/careers"},
+  {n:"BCG",l:"📊",c:"#00743F",ind:"consulting",e:"30k+",v:"Private",d:"Strategy consulting powerhouse.",s:"bcg.com/careers"},
+  {n:"Twitter/X",l:"𝕏",c:"#333",ind:"tech",e:"2k+",v:"$19B",d:"Global social media platform.",s:"careers.x.com"},
+  {n:"LinkedIn",l:"💼",c:"#0077B5",ind:"tech",e:"20k+",v:"MSFT",d:"Professional networking platform.",s:"careers.linkedin.com"},
+  {n:"Shopify",l:"🛍️",c:"#96BF48",ind:"ecommerce",e:"11k+",v:"$90B",d:"E-commerce platform for 2M+ businesses.",s:"shopify.com/careers"},
+  {n:"Snap",l:"👻",c:"#d4d400",ind:"tech",e:"5k+",v:"$16B",d:"Snapchat and AR spectacles.",s:"snap.com/jobs"},
+  {n:"Palantir",l:"🔮",c:"#555",ind:"tech",e:"4k+",v:"$50B",d:"Data analytics for government.",s:"palantir.com/careers"},
+  {n:"Databricks",l:"🧱",c:"#FF3621",ind:"tech",e:"7k+",v:"$43B",d:"Unified data analytics platform.",s:"databricks.com/careers"},
+  {n:"OpenAI",l:"🤖",c:"#10a37f",ind:"tech",e:"1.7k+",v:"$80B",d:"AI safety and research company.",s:"openai.com/careers"},
+  {n:"Anthropic",l:"🧠",c:"#00f5c4",ind:"tech",e:"500+",v:"$18B",d:"AI safety and Claude language models.",s:"anthropic.com/careers"},
+  {n:"SpaceX",l:"🚀",c:"#005288",ind:"automotive",e:"13k+",v:"$150B",d:"Space exploration and Starlink.",s:"spacex.com/careers"},
+  {n:"Bytedance",l:"🎵",c:"#444",ind:"tech",e:"100k+",v:"$300B",d:"TikTok parent. AI-driven content.",s:"bytedance.com/en/careers"},
+  {n:"Samsung",l:"📱",c:"#1428A0",ind:"tech",e:"267k+",v:"$350B",d:"Electronics conglomerate.",s:"samsung.com/careers"},
+  {n:"SAP",l:"🟦",c:"#009de0",ind:"tech",e:"105k+",v:"$220B",d:"Enterprise software for ERP.",s:"jobs.sap.com"},
+  {n:"Qualcomm",l:"📡",c:"#3253DC",ind:"tech",e:"50k+",v:"$180B",d:"Snapdragon mobile processors.",s:"qualcomm.com/careers"},
+  {n:"Cisco",l:"🌉",c:"#1BA0D7",ind:"tech",e:"84k+",v:"$190B",d:"Networking and cybersecurity.",s:"jobs.cisco.com"},
+  {n:"Zoom",l:"📹",c:"#2D8CFF",ind:"tech",e:"8k+",v:"$18B",d:"Video communications platform.",s:"zoom.us/careers"},
+  {n:"Atlassian",l:"🔷",c:"#0052CC",ind:"tech",e:"11k+",v:"$40B",d:"Jira, Confluence and Trello.",s:"atlassian.com/careers"},
+  {n:"Twilio",l:"📞",c:"#F22F46",ind:"tech",e:"9k+",v:"$11B",d:"Cloud communications APIs.",s:"twilio.com/jobs"},
+  {n:"Coinbase",l:"🪙",c:"#0052FF",ind:"finance",e:"3k+",v:"$15B",d:"Largest US crypto exchange.",s:"coinbase.com/careers"},
+  {n:"Robinhood",l:"🏹",c:"#00C805",ind:"finance",e:"2k+",v:"$9B",d:"Commission-free stock trading.",s:"robinhood.com/careers"},
+  {n:"DoorDash",l:"🍔",c:"#FF3008",ind:"ecommerce",e:"16k+",v:"$20B",d:"Food delivery marketplace.",s:"careers.doordash.com"},
+  {n:"Lyft",l:"🚕",c:"#FF00BF",ind:"tech",e:"4k+",v:"$4B",d:"Ride-sharing platform.",s:"lyft.com/careers"},
+  {n:"Snowflake",l:"❄️",c:"#29B5E8",ind:"tech",e:"7k+",v:"$45B",d:"Cloud data warehousing.",s:"careers.snowflake.com"},
+  {n:"Figma",l:"🖌️",c:"#F24E1E",ind:"tech",e:"1k+",v:"$20B",d:"Collaborative UI design tool.",s:"figma.com/careers"},
+  {n:"Notion",l:"📝",c:"#555",ind:"tech",e:"500+",v:"$10B",d:"All-in-one workspace.",s:"notion.so/careers"},
+  {n:"Canva",l:"🎭",c:"#00C4CC",ind:"tech",e:"4k+",v:"$26B",d:"Online design platform.",s:"canva.com/careers"},
+  {n:"Vercel",l:"▲",c:"#555",ind:"tech",e:"300+",v:"$3B",d:"Frontend cloud and Next.js.",s:"vercel.com/careers"},
+];
+
+// ══ EXPANDED JOB LIST (40 jobs) - ONLY THIS SECTION IS CHANGED ══
+const DB_JOBS = [
+  {id:1,title:"Internship at ABC Corp",effort:5,deadline:"2026-03-07",status:"upcoming",attended_day:null},
+  {id:2,title:"Online Research Project",effort:3,deadline:"2026-03-05",status:"upcoming",attended_day:null},
+  {id:3,title:"Freelance Design Task",effort:8,deadline:"2026-03-10",status:"upcoming",attended_day:null},
+  {id:4,title:"Open Source Contribution",effort:2,deadline:"2026-03-06",status:"upcoming",attended_day:null},
+  {id:5,title:"Hackathon Challenge",effort:7,deadline:"2026-03-08",status:"upcoming",attended_day:null},
+  {id:6,title:"Google Summer Internship",effort:6,deadline:"2026-03-15",status:"upcoming",attended_day:null},
+  {id:7,title:"Microsoft Software Engineering",effort:8,deadline:"2026-03-20",status:"upcoming",attended_day:null},
+  {id:8,title:"Amazon ML Research",effort:9,deadline:"2026-03-18",status:"upcoming",attended_day:null},
+  {id:9,title:"Apple iOS Development",effort:7,deadline:"2026-03-22",status:"upcoming",attended_day:null},
+  {id:10,title:"Meta AI Research Intern",effort:9,deadline:"2026-03-25",status:"upcoming",attended_day:null},
+  {id:11,title:"Netflix Frontend Challenge",effort:5,deadline:"2026-03-12",status:"upcoming",attended_day:null},
+  {id:12,title:"Tesla Embedded Systems",effort:8,deadline:"2026-03-28",status:"upcoming",attended_day:null},
+  {id:13,title:"Goldman Sachs Quant Analyst",effort:7,deadline:"2026-03-30",status:"upcoming",attended_day:null},
+  {id:14,title:"McKinsey Data Science",effort:6,deadline:"2026-04-02",status:"upcoming",attended_day:null},
+  {id:15,title:"Spotify Music ML",effort:5,deadline:"2026-04-05",status:"upcoming",attended_day:null},
+  {id:16,title:"Airbnb Growth Analytics",effort:4,deadline:"2026-04-08",status:"upcoming",attended_day:null},
+  {id:17,title:"Uber Freight Optimization",effort:6,deadline:"2026-04-10",status:"upcoming",attended_day:null},
+  {id:18,title:"Stripe Payments Engineering",effort:7,deadline:"2026-04-12",status:"upcoming",attended_day:null},
+  {id:19,title:"Salesforce Cloud Computing",effort:5,deadline:"2026-04-15",status:"upcoming",attended_day:null},
+  {id:20,title:"Adobe Creative Cloud Dev",effort:6,deadline:"2026-04-18",status:"upcoming",attended_day:null},
+  {id:21,title:"NVIDIA GPU Programming",effort:9,deadline:"2026-04-20",status:"upcoming",attended_day:null},
+  {id:22,title:"Intel Chip Design",effort:8,deadline:"2026-04-22",status:"upcoming",attended_day:null},
+  {id:23,title:"IBM Quantum Computing",effort:9,deadline:"2026-04-25",status:"upcoming",attended_day:null},
+  {id:24,title:"Oracle Database Intern",effort:5,deadline:"2026-04-28",status:"upcoming",attended_day:null},
+  {id:25,title:"JP Morgan Risk Management",effort:6,deadline:"2026-05-01",status:"upcoming",attended_day:null},
+  {id:26,title:"BlackRock Investment Analyst",effort:7,deadline:"2026-05-05",status:"upcoming",attended_day:null},
+  {id:27,title:"Deloitte Consulting Intern",effort:5,deadline:"2026-05-08",status:"upcoming",attended_day:null},
+  {id:28,title:"Accenture Tech Consulting",effort:4,deadline:"2026-05-10",status:"upcoming",attended_day:null},
+  {id:29,title:"BCG Strategy Intern",effort:6,deadline:"2026-05-12",status:"upcoming",attended_day:null},
+  {id:30,title:"Twitter/X Data Engineering",effort:5,deadline:"2026-05-15",status:"upcoming",attended_day:null},
+  {id:31,title:"LinkedIn Product Management",effort:7,deadline:"2026-05-18",status:"upcoming",attended_day:null},
+  {id:32,title:"Shopify E-commerce Dev",effort:4,deadline:"2026-05-20",status:"upcoming",attended_day:null},
+  {id:33,title:"Snap AR/VR Developer",effort:8,deadline:"2026-05-22",status:"upcoming",attended_day:null},
+  {id:34,title:"Palantir Data Analyst",effort:7,deadline:"2026-05-25",status:"upcoming",attended_day:null},
+  {id:35,title:"Databricks Spark Engineering",effort:6,deadline:"2026-05-28",status:"upcoming",attended_day:null},
+  {id:36,title:"OpenAI Safety Research",effort:9,deadline:"2026-06-01",status:"upcoming",attended_day:null},
+  {id:37,title:"Anthropic Claude Development",effort:8,deadline:"2026-06-05",status:"upcoming",attended_day:null},
+  {id:38,title:"SpaceX Avionics Intern",effort:9,deadline:"2026-06-08",status:"upcoming",attended_day:null},
+  {id:39,title:"Bytedance ML Engineering",effort:7,deadline:"2026-06-10",status:"upcoming",attended_day:null},
+  {id:40,title:"Samsung Mobile Dev",effort:5,deadline:"2026-06-12",status:"upcoming",attended_day:null}
+];
+
+// ══ API FUNCTIONS ══
+async function apiRequest(endpoint, method = 'GET', data = null, queryParams = null) {
+  let url = `${API_BASE_URL}${endpoint}`;
+  
+  if (queryParams) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(queryParams)) {
+      params.append(key, value);
+    }
+    url += `?${params.toString()}`;
+  }
+  
+  const options = {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
+
+  try {
+    const response = await fetch(url, options);
+    const responseData = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(responseData.detail || 'API request failed');
+    }
+    
+    return responseData;
+  } catch (error) {
+    console.error('API Error:', error);
+    toast(error.message, 'error');
+    throw error;
+  }
+}
+
+// ══ HELPERS ══
+const gU = () => JSON.parse(localStorage.getItem(UK) || '[]');
+const sU = u => localStorage.setItem(UK, JSON.stringify(u));
+const gJ = () => JSON.parse(localStorage.getItem(JK) || '[]');
+const sJ = j => localStorage.setItem(JK, JSON.stringify(j));
+
+function dfmt(n) {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split('T')[0];
+}
+
+function dl(d) {
+  const t = new Date();
+  t.setHours(0, 0, 0, 0);
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return Math.floor((x - t) / 864e5);
+}
+
+function initJ() {
+  let j = gJ();
+  if (!j.length) {
+    j = DB_JOBS.map(x => ({...x}));
+    sJ(j);
+  }
+  return j;
+}
+
+// ══ AUTH ══
+function swAuth(tab, el) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('lf').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('sf').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-err').style.display = 'none';
+  document.getElementById('auth-h').textContent = tab === 'login' ? 'Welcome back' : 'Create account';
+  document.getElementById('auth-s').textContent = tab === 'login' ? 'Login to your dashboard' : 'Join JobCommand today';
+}
+
+function showErr(m) {
+  const e = document.getElementById('auth-err');
+  e.textContent = m;
+  e.style.display = 'block';
+}
+
+async function doSignup() {
+  const n = document.getElementById('sn').value.trim();
+  const e = document.getElementById('se').value.trim();
+  const p = document.getElementById('sp').value;
+  
+  if (!n || !e || !p) {
+    showErr('Please fill all fields.');
+    return;
+  }
+
+  try {
+    const response = await apiRequest('/signup', 'POST', {
+      name: n,
+      email: e,
+      password: p
+    });
+    
+    toast('Account created! Please login.', 'success');
+    document.querySelectorAll('.auth-tab')[0].click();
+  } catch (error) {
+    showErr(error.message);
+  }
+}
+
+async function doLogin() {
+  const e = document.getElementById('le').value.trim();
+  const p = document.getElementById('lp').value;
+  
+  if (!e || !p) {
+    showErr('Please fill all fields.');
+    return;
+  }
+
+  try {
+    const response = await apiRequest('/login', 'POST', {
+      email: e,
+      password: p
+    });
+    
+    cu = {
+      id: response.student_id,
+      name: response.name,
+      email: e
+    };
+    
+    localStorage.setItem(CK, JSON.stringify(cu));
+    await fetchJobs();
+    enterApp();
+  } catch (error) {
+    showErr(error.message);
+  }
+}
+
+function doLogout() {
+  cu = null;
+  localStorage.removeItem(CK);
+  document.getElementById('app-page').classList.remove('active');
+  document.getElementById('auth-page').classList.add('active');
+  toast('Logged out', 'info');
+}
+
+async function chkSess() {
+  const s = localStorage.getItem(CK);
+  if (s) {
+    cu = JSON.parse(s);
+    await fetchJobs();
+    enterApp();
+  }
+}
+
+function enterApp() {
+  document.getElementById('auth-page').classList.remove('active');
+  document.getElementById('app-page').classList.add('active');
+  
+  const nm = cu.name;
+  document.getElementById('sb-av').textContent = nm[0].toUpperCase();
+  document.getElementById('sb-un').textContent = nm.split(' ')[0];
+  document.getElementById('sb-ue').textContent = cu.email;
+  document.getElementById('p-av').textContent = nm[0].toUpperCase();
+  document.getElementById('p-name').textContent = nm;
+  document.getElementById('p-email').textContent = cu.email;
+  
+  updStat();
+  setGreet();
+  goTo('dashboard', document.querySelector('.ni'));
+}
+
+// ══ JOB FUNCTIONS ══
+async function fetchJobs() {
+  try {
+    jobs = await apiRequest('/jobs');
+    sJ(jobs);
+    return jobs;
+  } catch (error) {
+    jobs = initJ();
+    return jobs;
+  }
+}
+
+async function createJob(jobData) {
+  try {
+    const newJob = await apiRequest('/jobs', 'POST', jobData);
+    await fetchJobs();
+    toast('✓ Job added successfully!', 'success');
+    return newJob;
+  } catch (error) {
+    toast('Failed to add job', 'error');
+    throw error;
+  }
+}
+
+async function selectJobs(jobIds, dailyLimit) {
+  try {
+    const selected = await apiRequest('/jobs/select', 'POST', jobIds, { daily_limit: dailyLimit });
+    await fetchJobs();
+    toast(`✓ ${jobIds.length} jobs attended!`, 'success');
+    return selected;
+  } catch (error) {
+    toast(error.message, 'error');
+    throw error;
+  }
+}
+
+async function getSmartSuggestions(n) {
+  try {
+    return await apiRequest(`/jobs/smart_suggest`, 'GET', null, { n: n });
+  } catch (error) {
+    const up = jobs.filter(j => j.status === 'upcoming');
+    up.sort((a, b) => {
+      const sa = 1 / (Math.max(dl(a.deadline), 0) + 1) + 1 / a.effort;
+      const sb = 1 / (Math.max(dl(b.deadline), 0) + 1) + 1 / b.effort;
+      return sb - sa;
+    });
+    return up.slice(0, n);
+  }
+}
+
+async function getProfile() {
+  try {
+    return await apiRequest('/profile');
+  } catch (error) {
+    const attended = jobs.filter(j => j.status === 'attended').length;
+    const missed = jobs.filter(j => j.status === 'missed').length;
+    const upcoming = jobs.filter(j => j.status === 'upcoming').length;
+    
+    let level = 'Intern';
+    if (attended > 20) level = 'Lead Engineer';
+    else if (attended > 10) level = 'Senior Developer';
+    else if (attended > 5) level = 'Junior Developer';
+    
+    return { attended, missed, upcoming, level };
+  }
+}
+
+async function getAnalytics() {
+  try {
+    const analytics = await apiRequest('/analytics');
+    const smoothing = await apiRequest('/analytics/smoothing');
+    return { ...analytics, smoothing_score: smoothing.smoothing_score };
+  } catch (error) {
+    const tot = jobs.length;
+    const att = jobs.filter(j => j.status === 'attended').length;
+    const sr = tot ? (att / tot) * 100 : 0;
+    const pp = Math.min(95, sr * 0.85);
+    
+    const attendedJobs = jobs.filter(j => j.status === 'attended' && j.attended_day);
+    let ss = 0;
+    if (attendedJobs.length) {
+      const dailyCounts = {};
+      attendedJobs.forEach(j => {
+        dailyCounts[j.attended_day] = (dailyCounts[j.attended_day] || 0) + 1;
+      });
+      const counts = Object.values(dailyCounts);
+      if (counts.length < 2) {
+        ss = 100;
+      } else {
+        const mean = counts.reduce((a, b) => a + b, 0) / counts.length;
+        const variance = counts.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / counts.length;
+        ss = Math.max(0, 100 - Math.sqrt(variance) * 15);
+      }
+    }
+    
+    return {
+      success_rate: Math.round(sr * 100) / 100,
+      placement_probability: Math.round(pp * 100) / 100,
+      smoothing_score: Math.round(ss * 100) / 100
+    };
+  }
+}
+
+// ══ NAV ══
+function toggleSB() {
+  document.getElementById('shell').classList.toggle('exp');
+}
+
+function goTo(s, el) {
+  document.querySelectorAll('.section').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(x => x.classList.remove('act'));
+  document.getElementById('sec-' + s).classList.add('active');
+  if (el) el.classList.add('act');
+  
+  const titles = {
+    dashboard: 'Dashboard',
+    jobs: 'All Jobs',
+    smart: 'Smart Suggest',
+    calendar: 'Calendar',
+    analytics: 'Analytics',
+    profile: 'Profile',
+    companies: 'Companies'
+  };
+  document.getElementById('tb-title').textContent = titles[s] || s;
+  
+  if (s === 'dashboard') loadDash();
+  if (s === 'jobs') {
+    selIds.clear();
+    renderJobs();
+  }
+  if (s === 'smart') {
+    sugIds.clear();
+    document.getElementById('sug-list').innerHTML = '<div style="text-align:center;padding:56px 20px;color:var(--muted);"><div style="font-size:48px;margin-bottom:14px;">🎯</div><div style="font-size:15px;">Click <strong style="color:var(--a);">Get Suggestions</strong> to see ranked jobs</div></div>';
+    document.getElementById('sug-banner').classList.remove('on');
+  }
+  if (s === 'calendar') renderCal();
+  if (s === 'analytics') loadAnalytics();
+  if (s === 'profile') loadProfile();
+  if (s === 'companies') renderCos();
+}
+
+// ══ STATUSES ══
+function updStat() {
+  const today = new Date().toISOString().split('T')[0];
+  let ch = false;
+  jobs.forEach(j => {
+    if (j.status === 'upcoming' && j.deadline < today) {
+      j.status = 'missed';
+      ch = true;
+    }
+  });
+  if (ch) sJ(jobs);
+}
+
+// ══ DASHBOARD ══
+function setGreet() {
+  const h = new Date().getHours();
+  document.getElementById('greet').textContent = (h < 12 ? 'Good morning 🌅' : h < 18 ? 'Good afternoon ☀️' : 'Good evening 🌙') + ', ' + cu.name.split(' ')[0] + '!';
+}
+
+async function loadDash() {
+  updStat();
+  
+  const profile = await getProfile();
+  const analytics = await getAnalytics();
+  
+  document.getElementById('d-att').textContent = profile.attended;
+  document.getElementById('d-up').textContent = profile.upcoming;
+  document.getElementById('d-mis').textContent = profile.missed;
+  document.getElementById('d-rate').textContent = analytics.success_rate + '%';
+  
+  const today = new Date().toISOString().split('T')[0];
+  const td = jobs.filter(j => j.deadline === today && j.status === 'upcoming');
+  
+  document.getElementById('td-list').innerHTML = td.length
+    ? td.map(j => `<div style="padding:9px 0;border-bottom:1px solid var(--border);font-size:14px;display:flex;justify-content:space-between;align-items:center;"><span style="font-weight:500;">${j.title}</span><span class="dc dr">TODAY ⚡</span></div>`).join('')
+    : '<div style="color:var(--muted);font-size:14px;">No deadlines today ✓</div>';
+}
+
+// ══ JOBS TABLE ══
+function renderJobs() {
+  updStat();
+  const f = document.getElementById('f-status').value;
+  const jj = f === 'all' ? jobs : jobs.filter(j => j.status === f);
+  
+  document.getElementById('jb').textContent = `(${jj.length})`;
+  
+  const tb = document.getElementById('jtb');
+  if (!jj.length) {
+    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted);">No jobs found</td></tr>`;
+    return;
+  }
+  
+  tb.innerHTML = jj.map(j => {
+    const sel = selIds.has(j.id);
+    const days = dl(j.deadline);
+    
+    let dchip = '';
+    if (j.status === 'upcoming') {
+      if (days < 0) dchip = `<span class="dc dr">Overdue</span>`;
+      else if (days === 0) dchip = `<span class="dc dr">TODAY ⚡</span>`;
+      else if (days <= 2) dchip = `<span class="dc dr">${days}d 🔥</span>`;
+      else if (days <= 5) dchip = `<span class="dc do">${days}d ⚠️</span>`;
+      else dchip = `<span class="dc dg">${days}d</span>`;
+    } else dchip = `<span style="color:var(--muted);font-size:13px;">—</span>`;
+    
+    const bell = (j.status === 'upcoming' && days >= 0 && days <= 3) ? `<span class="bell">🔔</span>` : '';
+    
+    const co = COS.find(c => j.title.toLowerCase().includes(c.n.toLowerCase()));
+    const logo = co ? `<div class="jlogo" style="background:${co.c}22;">${co.l}</div>` : `<div class="jlogo">💼</div>`;
+    
+    const sp = {
+      upcoming: `<span class="pill p-up">● Upcoming</span>`,
+      attended: `<span class="pill p-at">✓ Attended</span>`,
+      missed: `<span class="pill p-mi">✗ Missed</span>`
+    }[j.status];
+    
+    return `<tr class="${sel ? 'selected-row' : ''}" onclick="togSel(${j.id})">
+      <td><div class="cb">${sel ? '✓' : ''}</div></td>
+      <td><div class="jl">${logo}<div><div class="jn">${j.title}</div><div class="js">Deadline: ${j.deadline}</div></div></div></td>
+      <td style="font-size:13px;color:var(--muted);">${j.deadline}</td>
+      <td>${dchip}</td>
+      <td><div class="ef"><div class="et"><div class="ef-fill" style="width:${j.effort * 10}%;"></div></div><span class="en">${j.effort}/10</span></div></td>
+      <td>${sp}</td>
+      <td>${bell}</td>
+    </tr>`;
+  }).join('');
+  
+  updSelBanner();
+}
+
+function togSel(id) {
+  const j = jobs.find(x => x.id === id);
+  if (!j || j.status !== 'upcoming') return;
+  selIds.has(id) ? selIds.delete(id) : selIds.add(id);
+  renderJobs();
+}
+
+function updSelBanner() {
+  const n = selIds.size;
+  document.getElementById('sel-n').textContent = n;
+  document.getElementById('sel-banner').classList.toggle('on', n > 0);
+}
+
+function clearSel() {
+  selIds.clear();
+  renderJobs();
+}
+
+async function confirmSel() {
+  const lim = parseInt(document.getElementById('d-lim').value) || 5;
+  if (selIds.size > lim) {
+    toast(`Daily limit is ${lim}. Selected ${selIds.size}.`, 'error');
+    return;
+  }
+  
+  await selectJobs(Array.from(selIds), lim);
+  selIds.clear();
+  renderJobs();
+}
+
+// ══ SMART SUGGEST ══
+async function runSuggest() {
+  const n = parseInt(document.getElementById('sug-n').value) || 3;
+  const top = await getSmartSuggestions(n);
+  sugIds.clear();
+  renderSugList(top);
+  toast(`🎯 Top ${top.length} jobs ranked!`, 'info');
+}
+
+function renderSugList(jj) {
+  const list = document.getElementById('sug-list');
+  
+  if (!jj.length) {
+    list.innerHTML = '<div style="text-align:center;padding:56px;color:var(--muted);"><div style="font-size:48px;margin-bottom:14px;">🎯</div><div>Click Get Suggestions</div></div>';
+    document.getElementById('sug-banner').classList.remove('on');
+    return;
+  }
+  
+  const medals = ['🥇', '🥈', '🥉'];
+  
+  list.innerHTML = jj.map((j, i) => {
+    const urg = Math.max(dl(j.deadline), 0);
+    const score = (1 / (urg + 1) + 1 / j.effort).toFixed(2);
+    const sel = sugIds.has(j.id);
+    const days = dl(j.deadline);
+    
+    let dc = '';
+    if (days < 0) dc = `<span class="dc dr">Overdue</span>`;
+    else if (days === 0) dc = `<span class="dc dr">TODAY ⚡</span>`;
+    else if (days <= 2) dc = `<span class="dc dr">${days}d 🔥</span>`;
+    else if (days <= 5) dc = `<span class="dc do">${days}d ⚠️</span>`;
+    else dc = `<span class="dc dg">${days}d</span>`;
+    
+    const co = COS.find(c => j.title.toLowerCase().includes(c.n.toLowerCase()));
+    const logo = co ? `<div class="jlogo" style="background:${co.c}22;">${co.l}</div>` : `<div class="jlogo">💼</div>`;
+    
+    return `<div class="rank-card ${sel ? 'rc-sel' : ''}" onclick="togSug(${j.id}, this)">
+      <div class="rn">${medals[i] || '#' + (i + 1)}</div>
+      <div class="cb" style="${sel ? 'background:var(--a);border-color:var(--a);color:#060810;' : ''}">${sel ? '✓' : ''}</div>
+      ${logo}
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:14px;margin-bottom:3px;">${j.title}</div>
+        <div style="font-size:12px;color:var(--muted);">Urgency: ${urg}d &nbsp;·&nbsp; Effort: ${j.effort}/10 &nbsp;·&nbsp; Deadline: ${j.deadline}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">${dc}<div class="sc-pill">Score: ${score}</div></div>
+    </div>`;
+  }).join('');
+  
+  updSugBanner();
+}
+
+function togSug(id, el) {
+  const card = el.closest('.rank-card');
+  sugIds.has(id) ? sugIds.delete(id) : sugIds.add(id);
+  
+  const sel = sugIds.has(id);
+  card.classList.toggle('rc-sel', sel);
+  
+  const cb = card.querySelector('.cb');
+  cb.style.background = sel ? 'var(--a)' : '';
+  cb.style.borderColor = sel ? 'var(--a)' : 'var(--border2)';
+  cb.style.color = sel ? '#060810' : '';
+  cb.textContent = sel ? '✓' : '';
+  
+  updSugBanner();
+}
+
+function updSugBanner() {
+  const n = sugIds.size;
+  document.getElementById('sug-n2').textContent = n;
+  document.getElementById('sug-banner').classList.toggle('on', n > 0);
+}
+
+function clearSugSel() {
+  sugIds.clear();
+  document.querySelectorAll('.rank-card').forEach(c => {
+    c.classList.remove('rc-sel');
+    const cb = c.querySelector('.cb');
+    if (cb) {
+      cb.style.background = '';
+      cb.style.borderColor = 'var(--border2)';
+      cb.style.color = '';
+      cb.textContent = '';
+    }
+  });
+  updSugBanner();
+}
+
+async function confirmSugSel() {
+  const lim = parseInt(document.getElementById('sug-lim').value) || 5;
+  if (sugIds.size > lim) {
+    toast(`Daily limit is ${lim}. Selected ${sugIds.size}.`, 'error');
+    return;
+  }
+  
+  await selectJobs(Array.from(sugIds), lim);
+  sugIds.clear();
+  renderSugList([]);
+}
+
+// ══ CALENDAR ══
+function renderCal() {
+  const n = new Date();
+  if (!calY) {
+    calY = n.getFullYear();
+    calM = n.getMonth();
+  }
+  drawCal();
+}
+
+function calPrev() {
+  calM--;
+  if (calM < 0) {
+    calM = 11;
+    calY--;
+  }
+  drawCal();
+}
+
+function calNext() {
+  calM++;
+  if (calM > 11) {
+    calM = 0;
+    calY++;
+  }
+  drawCal();
+}
+
+function drawCal() {
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  document.getElementById('cal-mo').textContent = `${months[calM]} ${calY}`;
+  
+  const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const today = new Date().toISOString().split('T')[0];
+  
+  const attS = new Set(jobs.filter(j => j.attended_day).map(j => j.attended_day));
+  const deadS = new Set(jobs.filter(j => j.status === 'upcoming').map(j => j.deadline));
+  
+  const first = new Date(calY, calM, 1).getDay();
+  const total = new Date(calY, calM + 1, 0).getDate();
+  
+  let h = days.map(d => `<div class="cdn">${d}</div>`).join('');
+  
+  for (let i = 0; i < first; i++) h += `<div class="cd oth"></div>`;
+  
+  for (let d = 1; d <= total; d++) {
+    const ds = `${calY}-${String(calM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const cls = [ds === today ? 'tod' : '', attS.has(ds) ? 'hatt' : deadS.has(ds) ? 'hdead' : ''].filter(Boolean).join(' ');
+    h += `<div class="cd ${cls}" onclick="calClick('${ds}')">${d}</div>`;
+  }
+  
+  document.getElementById('cal-g').innerHTML = h;
+}
+
+function calClick(ds) {
+  const det = document.getElementById('cal-det');
+  const jj = jobs.filter(j => j.deadline === ds || j.attended_day === ds);
+  
+  det.innerHTML = `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;margin-bottom:10px;">${ds}</div>`
+    + (jj.length ? jj.map(j => `<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;"><div style="font-weight:500;margin-bottom:2px;">${j.title}</div><div style="color:var(--muted);">${j.attended_day === ds ? '✓ Attended' : '📅 Deadline'}</div></div>`).join('')
+      : '<div style="color:var(--muted);font-size:13px;">No activity</div>');
+}
+
+// ══ ANALYTICS ══
+async function loadAnalytics() {
+  updStat();
+  
+  const analytics = await getAnalytics();
+  const tot = jobs.length;
+  const att = jobs.filter(j => j.status === 'attended').length;
+  const mis = jobs.filter(j => j.status === 'missed').length;
+  const up = jobs.filter(j => j.status === 'upcoming').length;
+  
+  document.getElementById('gv1').textContent = analytics.success_rate + '%';
+  document.getElementById('gv2').textContent = analytics.placement_probability + '%';
+  
+  const circ = 339.3;
+  setTimeout(() => {
+    document.getElementById('arc1').style.strokeDashoffset = circ - (circ * analytics.success_rate / 100);
+    document.getElementById('arc2').style.strokeDashoffset = circ - (circ * analytics.placement_probability / 100);
+  }, 100);
+  
+  document.getElementById('sm-score').textContent = analytics.smoothing_score || '—';
+  setTimeout(() => {
+    document.getElementById('sm-bar').style.width = (analytics.smoothing_score || 0) + '%';
+  }, 100);
+  
+  document.getElementById('bchart').innerHTML = [
+    { l: 'Attended', v: att, c: 'var(--a)' },
+    { l: 'Upcoming', v: up, c: 'var(--a2)' },
+    { l: 'Missed', v: mis, c: 'var(--a3)' }
+  ].map(b => `<div class="bar-r"><div class="bar-l">${b.l}</div><div class="bar-t"><div class="bar-f" style="background:${b.c};width:${tot ? Math.round(b.v / tot * 100) : 0}%;"></div></div><div class="bar-n" style="color:${b.c};">${b.v}</div></div>`).join('');
+}
+
+// ══ PROFILE ══
+async function loadProfile() {
+  updStat();
+  
+  const profile = await getProfile();
+  
+  document.getElementById('p-att').textContent = profile.attended;
+  document.getElementById('p-mis').textContent = profile.missed;
+  document.getElementById('p-up').textContent = profile.upcoming;
+  
+  document.getElementById('p-lv').textContent = profile.level;
+  
+  let nx, nt;
+  const att = profile.attended;
+  
+  if (att > 20) {
+    nx = att;
+    nt = att;
+  } else if (att > 10) {
+    nx = att - 10;
+    nt = 10;
+  } else if (att > 5) {
+    nx = att - 5;
+    nt = 5;
+  } else {
+    nx = att;
+    nt = 5;
+  }
+  
+  const pct = Math.min(100, Math.round(nx / nt * 100));
+  setTimeout(() => {
+    document.getElementById('p-bar').style.width = pct + '%';
+    document.getElementById('p-prog').textContent = `${nx}/${nt} to next level`;
+  }, 200);
+}
+
+// ══ COMPANIES ══
+function renderCos() {
+  const q = (document.getElementById('co-q').value || '').toLowerCase();
+  const f = document.getElementById('co-f').value;
+  
+  const filtered = COS.filter(c => 
+    (!q || c.n.toLowerCase().includes(q) || c.d.toLowerCase().includes(q)) && 
+    (f === 'all' || c.ind === f)
+  );
+  
+  document.getElementById('co-grid').innerHTML = filtered.map(c => `
+    <div class="co-card" onclick="window.open('https://${c.s}','_blank')">
+      <div class="co-logo" style="background:${c.c}22;color:${c.c};">${c.l}</div>
+      <div class="co-n">${c.n}</div>
+      <div class="co-site" style="color:${c.c};">🌐 ${c.s}</div>
+      <div class="co-d">${c.d}</div>
+      <div class="co-tags"><span class="co-tag">${c.e}</span><span class="co-tag">${c.v}</span><span class="co-tag">${c.ind}</span></div>
+    </div>`).join('');
+}
+
+// ══ ADD JOB ══
+function openAddJob() {
+  document.getElementById('nj-d').value = dfmt(7);
+  document.getElementById('add-modal').classList.add('on');
+}
+
+function closeMo() {
+  document.getElementById('add-modal').classList.remove('on');
+}
+
+async function submitJob() {
+  const t = document.getElementById('nj-t').value.trim();
+  const e = parseInt(document.getElementById('nj-e').value);
+  const d = document.getElementById('nj-d').value;
+  
+  if (!t || !e || !d) {
+    toast('Please fill all fields', 'error');
+    return;
+  }
+  
+  await createJob({
+    title: t,
+    effort: e,
+    deadline: d
+  });
+  
+  closeMo();
+  renderJobs();
+}
+
+// ══ TOAST ══
+function toast(msg, type = 'info') {
+  const c = document.getElementById('ts');
+  const el = document.createElement('div');
+  el.className = `t ${type}`;
+  el.innerHTML = `<div class="t-ico">${{ success: '✓', error: '✕', info: 'ℹ' }[type]}</div><span>${msg}</span>`;
+  c.appendChild(el);
+  
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('in')));
+  
+  setTimeout(() => {
+    el.classList.remove('in');
+    setTimeout(() => el.remove(), 400);
+  }, 3200);
+}
+
+// ══ INIT ══
+document.getElementById('nj-d').value = dfmt(7);
+chkSess();
+
+['le', 'lp'].forEach(id => 
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); })
+);
+
+['sn', 'se', 'sp'].forEach(id => 
+  document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') doSignup(); })
+);
+
+document.getElementById('add-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeMo();
+});
+</script>
+</body>
+</html>
