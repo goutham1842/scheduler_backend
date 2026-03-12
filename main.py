@@ -10,9 +10,7 @@ from typing import List
 
 from database import engine, SessionLocal
 import models, schemas
-@app.get("/")
-def home():
-    return {"message": "Student Job Command Center API is running"}
+
 
 # -------------------------
 # APP
